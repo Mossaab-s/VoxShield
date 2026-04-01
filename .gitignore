@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+logs/
+
+# Models (large binary files)
+*.onnx
+*.bin
+*.pt
+*.pth
+models/
+
+# Config with secrets
+config.json
+settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Claude
+.claude/

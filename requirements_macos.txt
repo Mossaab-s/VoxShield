@@ -1,0 +1,9 @@
+# Dépendances spécifiques macOS
+# Installe après requirements.txt : pip install -r requirements_macos.txt
+
+# Note : BlackHole 2ch doit être installé manuellement
+# Téléchargement : https://existential.audio/blackhole/
+# Via Homebrew : brew install blackhole-2ch
+
+# Note : piper-tts peut nécessiter une installation manuelle du binaire
+# Voir : https://github.com/rhasspy/piper/releases

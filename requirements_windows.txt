@@ -1,0 +1,9 @@
+# Dépendances spécifiques Windows
+# Installe après requirements.txt : pip install -r requirements_windows.txt
+
+# Loopback audio Windows via WASAPI (nécessaire pour Pipeline B sur Windows)
+PyAudioWPatch>=0.2.12.5
+
+# Note : VB-Audio Virtual Cable doit être installé manuellement
+# Téléchargement : https://vb-audio.com/Cable/
+# Redémarrage Windows requis après installation

@@ -1,0 +1,36 @@
+# ─── Interface Utilisateur ───────────────────────────────────────────────────
+PyQt6>=6.6.0              # Framework UI principal
+pystray>=0.19.4           # System tray cross-platform
+Pillow>=10.0.0            # Images pour pystray + icônes
+
+# ─── Audio ───────────────────────────────────────────────────────────────────
+sounddevice>=0.4.6        # Capture/lecture audio cross-platform
+numpy>=1.24.0             # Traitement signaux audio
+scipy>=1.11.0             # Rééchantillonnage audio (resample)
+webrtcvad>=2.0.10         # VAD rapide (Voice Activity Detection)
+# Pour Silero VAD (optionnel, meilleure précision) :
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+
+# ─── Speech-to-Text ──────────────────────────────────────────────────────────
+faster-whisper>=0.10.0    # Whisper optimisé CTranslate2
+openai>=1.12.0            # Client OpenAI (Whisper API + TTS)
+
+# ─── Traduction ──────────────────────────────────────────────────────────────
+argostranslate>=1.9.1     # Traduction locale offline
+deepl>=1.17.0             # Client DeepL API officiel
+requests>=2.31.0          # HTTP pour vérification connectivité
+
+# ─── Text-to-Speech ──────────────────────────────────────────────────────────
+piper-tts>=1.2.0          # TTS local haute qualité (+ binaire séparé à télécharger)
+pyttsx3>=2.90             # TTS système (fallback)
+
+# ─── Configuration & Utilitaires ─────────────────────────────────────────────
+pydantic>=2.5.0           # Validation de données
+keyring>=24.0.0           # Stockage sécurisé des clés API (gestionnaire OS)
+keyboard>=0.13.5          # Raccourcis clavier globaux
+platformdirs>=4.1.0       # Dossiers config cross-platform
+packaging>=23.0           # Gestion des versions
+
+# ─── Développement & Tests ───────────────────────────────────────────────────
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
