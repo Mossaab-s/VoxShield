@@ -413,25 +413,19 @@ class _PyAudioWPatchStream:
     ) -> None:
         self._pa = pyaudio_module.PyAudio()
         self._stream = None
+        self._channels = 1
 
-        wasapi_info = self._pa.get_host_api_info_by_type(pyaudio_module.paWASAPI)
+        try:
+            if device_index is None:
+                dev_info = self._pa.get_default_wasapi_loopback()
+            else:
+                dev_info = self._pa.get_wasapi_loopback_analogue_by_index(device_index)
+        except Exception:
+            # Fallback robuste si la résolution explicite échoue
+            dev_info = self._pa.get_default_wasapi_loopback()
 
-        if device_index is None:
-            # Utiliser le périphérique de sortie par défaut en mode loopback
-            default_out = self._pa.get_default_output_device_info()
-            device_index = default_out["index"]
-
-        dev_info = self._pa.get_device_info_by_index(device_index)
-        if not dev_info.get("isLoopbackDevice", False):
-            # Chercher la version loopback correspondante
-            for i in range(wasapi_info["deviceCount"]):
-                d = self._pa.get_device_info_by_host_api_device_index(
-                    wasapi_info["index"], i
-                )
-                if d.get("isLoopbackDevice") and d["name"].startswith(dev_info["name"][:10]):
-                    device_index = d["index"]
-                    dev_info = d
-                    break
+        device_index = dev_info["index"]
+        self._channels = max(1, int(dev_info.get("maxInputChannels", 1)))
 
         # Use the device's actual native sample rate
         self.actual_sample_rate = int(dev_info.get("defaultSampleRate", 44100))
@@ -445,7 +439,7 @@ class _PyAudioWPatchStream:
 
         self._stream = self._pa.open(
             format=pyaudio_module.paInt16,
-            channels=1,
+            channels=self._channels,
             rate=self.actual_sample_rate,
             input=True,
             input_device_index=device_index,
@@ -457,6 +451,11 @@ class _PyAudioWPatchStream:
 
     def read(self, frames: int) -> tuple[bytes, bool]:
         data = self._stream.read(frames, exception_on_overflow=False)
+        if self._channels > 1:
+            audio = np.frombuffer(data, dtype=np.int16)
+            if audio.size:
+                audio = audio.reshape(-1, self._channels).mean(axis=1)
+                data = audio.astype(np.int16).tobytes()
         return data, False
 
     def stop(self) -> None:

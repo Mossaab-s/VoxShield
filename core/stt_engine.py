@@ -165,9 +165,10 @@ class STTEngine:
         segments, info = self._model.transcribe(
             audio_array,
             language=self._language,
-            beam_size=5,
+            beam_size=1,
             vad_filter=False,       # VAD géré en amont
             word_timestamps=False,  # Non requis pour la traduction
+            condition_on_previous_text=False,
         )
 
         text_parts = []

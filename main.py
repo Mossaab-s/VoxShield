@@ -60,7 +60,14 @@ def main() -> None:
         on_settings=window.open_settings,
         on_quit=app.quit,
     )
-    controller.on_status_change = lambda s: tray.update_state(s)
+    previous_status_callback = controller.on_status_change
+
+    def _on_status_change(state) -> None:
+        if previous_status_callback:
+            previous_status_callback(state)
+        tray.update_state(state)
+
+    controller.on_status_change = _on_status_change
     tray.show()
 
     # Raccourcis clavier globaux
@@ -69,9 +76,9 @@ def main() -> None:
     hotkeys.register_all(
         on_start_stop=controller.toggle,
         on_mute=controller.toggle_mute,
-        on_overlay=window._overlay.toggle_visible,
-        on_swap=window._on_swap_languages,
-        on_show_hide=lambda: window.show() if window.isHidden() else window.hide(),
+        on_overlay=window.request_toggle_overlay,
+        on_swap=window.request_swap_languages,
+        on_show_hide=window.request_toggle_visibility,
     )
 
     # Wizard premier lancement

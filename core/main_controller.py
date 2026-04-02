@@ -238,6 +238,8 @@ class MainController:
                 mode=s.stt_mode,
                 model_size=s.stt_model_size,
                 language=user_lang,
+                openai_api_key=s.get_api_key("openai"),
+                models_dir=s.whisper_models_dir,
             )
             self._translation_a = TranslationEngine(
                 mode=s.translation_mode,
@@ -273,6 +275,8 @@ class MainController:
                 mode=s.stt_mode,
                 model_size=s.stt_model_size,
                 language=remote_lang,
+                openai_api_key=s.get_api_key("openai"),
+                models_dir=s.whisper_models_dir,
             )
             self._translation_b = TranslationEngine(
                 mode=s.translation_mode,
@@ -291,6 +295,9 @@ class MainController:
                 )
 
         # Précharger les modèles dans des threads dédiés
+        if self._router and s.virtual_cable_index is not None:
+            self._router.set_device_by_index(s.virtual_cable_index)
+
         self._preload_models()
 
     def _preload_models(self) -> None:

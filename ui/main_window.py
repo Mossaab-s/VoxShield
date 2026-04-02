@@ -128,6 +128,9 @@ class MainWindow(QMainWindow):
     _sig_status = pyqtSignal(object)
     _sig_error = pyqtSignal(str)
     _sig_latency = pyqtSignal(int)
+    _sig_request_swap = pyqtSignal()
+    _sig_request_toggle_overlay = pyqtSignal()
+    _sig_request_toggle_visibility = pyqtSignal()
 
     def __init__(self, controller: MainController, settings: SettingsManager) -> None:
         super().__init__()
@@ -144,11 +147,16 @@ class MainWindow(QMainWindow):
         self._sig_status.connect(self._on_status_change)
         self._sig_error.connect(self._on_error)
         self._sig_latency.connect(self._on_latency)
+        self._sig_request_swap.connect(self._on_swap_languages)
+        self._sig_request_toggle_overlay.connect(self._toggle_overlay)
+        self._sig_request_toggle_visibility.connect(self._toggle_visibility)
 
         # Overlay sous-titres
         self._overlay = OverlayWindow(
             screen_position=tuple(settings.overlay_position)
         )
+        self._overlay.set_opacity(settings.overlay_opacity)
+        self._overlay.set_font_size(settings.overlay_font_size)
 
         self._setup_window()
         self._setup_ui()
@@ -399,9 +407,18 @@ class MainWindow(QMainWindow):
         self._combo_mic.currentIndexChanged.connect(
             lambda: self._settings.__setattr__("input_device_index", self._combo_mic.currentData())
         )
+        self._combo_loopback.currentIndexChanged.connect(
+            lambda: self._settings.__setattr__("loopback_device_index", self._combo_loopback.currentData())
+        )
+        self._combo_vcable.currentIndexChanged.connect(
+            lambda: self._settings.__setattr__("virtual_cable_index", self._combo_vcable.currentData())
+        )
 
     def _apply_settings(self) -> None:
         """Applique les paramètres sauvegardés à l'UI."""
+        self._select_combo(self._combo_mic, self._settings.input_device_index)
+        self._select_combo(self._combo_loopback, self._settings.loopback_device_index)
+        self._select_combo(self._combo_vcable, self._settings.virtual_cable_index)
         self._btn_pipe_a.setChecked(self._settings.pipeline_a_enabled)
         self._btn_pipe_b.setChecked(self._settings.pipeline_b_enabled)
         self._btn_local_tts.setChecked(self._settings.local_tts_output)
@@ -480,6 +497,23 @@ class MainWindow(QMainWindow):
         color = "#A6E3A1" if latency_ms < 2000 else "#F9E2AF" if latency_ms < 3000 else "#F38BA8"
         self._lbl_latency.setText(f"{latency_ms} ms")
         self._lbl_latency.setStyleSheet(f"color: {color}; font-size: 11px;")
+
+    @pyqtSlot()
+    def _toggle_overlay(self) -> None:
+        self._overlay.toggle_visible()
+
+    @pyqtSlot()
+    def _toggle_visibility(self) -> None:
+        self.show() if self.isHidden() else self.hide()
+
+    def request_swap_languages(self) -> None:
+        self._sig_request_swap.emit()
+
+    def request_toggle_overlay(self) -> None:
+        self._sig_request_toggle_overlay.emit()
+
+    def request_toggle_visibility(self) -> None:
+        self._sig_request_toggle_visibility.emit()
 
     # ── Helpers ───────────────────────────────────────────────────────────────
 

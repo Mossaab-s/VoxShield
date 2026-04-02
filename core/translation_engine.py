@@ -175,7 +175,7 @@ class TranslationEngine:
             for lang in at_translate.get_installed_languages():
                 for tgt_lang in at_translate.get_installed_languages():
                     if tgt_lang.code != lang.code:
-                        if lang.get_translation(tgt_lang.code) is not None:
+                        if lang.get_translation(tgt_lang) is not None:
                             pairs.append((lang.code, tgt_lang.code))
             return pairs
         except Exception:
